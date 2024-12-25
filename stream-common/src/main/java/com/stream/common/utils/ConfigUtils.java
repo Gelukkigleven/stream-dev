@@ -1,6 +1,7 @@
 package com.stream.common.utils;
 
 import com.google.common.base.Strings;
+import com.sun.org.apache.bcel.internal.generic.NEW;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,6 +19,7 @@ public final class ConfigUtils {
     private static final Logger logger = LoggerFactory.getLogger(ConfigUtils.class);
 
     private static Properties properties;
+
 
     static {
         try {

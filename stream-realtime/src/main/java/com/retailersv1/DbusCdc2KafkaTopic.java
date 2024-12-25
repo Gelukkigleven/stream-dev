@@ -5,6 +5,7 @@ import com.retailersv1.func.MapUpdateHbaseDimTableFunc;
 import com.retailersv1.func.ProcessSpiltStreamToHBaseDim;
 import com.stream.common.utils.ConfigUtils;
 import com.stream.common.utils.EnvironmentSettingUtils;
+import com.stream.common.utils.KafkaUtils;
 import com.stream.utils.CdcSourceUtils;
 import com.ververica.cdc.connectors.mysql.source.MySqlSource;
 import com.ververica.cdc.connectors.mysql.table.StartupOptions;
