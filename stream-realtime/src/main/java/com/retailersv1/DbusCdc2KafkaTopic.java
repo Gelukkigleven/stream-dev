@@ -103,7 +103,7 @@ public class DbusCdc2KafkaTopic {
 
 
 //        cdcDbMainStream.sinkTo(
-//                KafkaUtils.buildKafkaSink(ConfigUtils.getString("kafka.bootstrap.servers"),"realtime_v1_mysql_db")
+//                KafkaUtils.buildKafkaSink(ConfigUtils.getString("kafka.bootstrap.servers"),"topic_db")
 //        ).uid("sink_to_kafka_realtime_v1_mysql_db").name("sink_to_kafka_realtime_v1_mysql_db");
 
         env.execute();
