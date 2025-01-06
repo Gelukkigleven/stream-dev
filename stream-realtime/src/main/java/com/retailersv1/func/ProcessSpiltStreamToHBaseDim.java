@@ -6,16 +6,20 @@ import com.stream.common.utils.ConfigUtils;
 import com.stream.common.utils.HbaseUtils;
 import com.stream.common.utils.JdbcUtils;
 import org.apache.flink.api.common.state.BroadcastState;
+import org.apache.flink.api.common.state.CheckpointListener;
 import org.apache.flink.api.common.state.MapStateDescriptor;
 import org.apache.flink.api.common.state.ReadOnlyBroadcastState;
 import org.apache.flink.configuration.Configuration;
+import org.apache.flink.runtime.checkpoint.Checkpoint;
 import org.apache.flink.streaming.api.functions.co.BroadcastProcessFunction;
 import org.apache.flink.util.Collector;
 import org.apache.hadoop.hbase.TableName;
 import org.apache.hadoop.hbase.client.Put;
 import org.apache.hadoop.hbase.client.Table;
 import org.apache.hadoop.hbase.util.Bytes;
+import org.apache.hadoop.hbase.util.MD5Hash;
 
+import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
 import java.util.*;
 
@@ -65,7 +69,6 @@ public class ProcessSpiltStreamToHBaseDim extends BroadcastProcessFunction<JSONO
         ReadOnlyBroadcastState<String, JSONObject> broadcastState = readOnlyContext.getBroadcastState(mapStateDescriptor);
         String tableName = jsonObject.getJSONObject("source").getString("table");
         JSONObject broadData = broadcastState.get(tableName);
-//        System.out.println(broadData);
         // 这里可能为null NullPointerException
         if (broadData != null || configMap.get(tableName) != null){
             if (configMap.get(tableName).getSourceTable().equals(tableName)){
@@ -74,10 +77,9 @@ public class ProcessSpiltStreamToHBaseDim extends BroadcastProcessFunction<JSONO
                     JSONObject after = jsonObject.getJSONObject("after");
                     String sinkTableName = configMap.get(tableName).getSinkTable();
                     sinkTableName = "gmall_config:"+sinkTableName;
-//                    System.out.println(sinkTableName);
                     String hbaseRowKey = after.getString(configMap.get(tableName).getSinkRowKey());
                     Table hbaseConnectionTable = hbaseConnection.getTable(TableName.valueOf(sinkTableName));
-                    Put put = new Put(Bytes.toBytes(hbaseRowKey));
+                    Put put = new Put(Bytes.toBytes(MD5Hash.getMD5AsHex(hbaseRowKey.getBytes(StandardCharsets.UTF_8))));
                     for (Map.Entry<String, Object> entry : after.entrySet()) {
                         put.addColumn(Bytes.toBytes("info"),Bytes.toBytes(entry.getKey()),Bytes.toBytes(String.valueOf(entry.getValue())));
                     }
@@ -97,7 +99,6 @@ public class ProcessSpiltStreamToHBaseDim extends BroadcastProcessFunction<JSONO
         String op = jsonObject.getString("op");
         if (jsonObject.containsKey("after")){
             String sourceTableName = jsonObject.getJSONObject("after").getString("source_table");
-//            System.out.println(sourceTableName);
             if ("d".equals(op)){
                 broadcastState.remove(sourceTableName);
             }else {

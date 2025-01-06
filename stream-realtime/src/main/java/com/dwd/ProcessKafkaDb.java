@@ -1,10 +1,9 @@
-package com.retailersv1;
+package com.dwd;
 
 import com.alibaba.fastjson.JSONObject;
 import com.retailersv1.func.DwdProcessFunction;
 import com.stream.common.utils.ConfigUtils;
 import com.stream.common.utils.EnvironmentSettingUtils;
-import com.stream.common.utils.KafkaUtils;
 import com.stream.utils.CdcSourceUtils;
 import com.ververica.cdc.connectors.mysql.source.MySqlSource;
 import com.ververica.cdc.connectors.mysql.table.StartupOptions;
@@ -90,12 +89,8 @@ public class ProcessKafkaDb {
         MapStateDescriptor<String, JSONObject> mapStageDesc = new MapStateDescriptor<>("mapStageDesc", String.class, JSONObject.class);
         BroadcastStream<JSONObject> broadcastDs = cdcDbDwdStreamMapCleanColumn.broadcast(mapStageDesc);
         BroadcastConnectedStream<JSONObject, JSONObject> connectDs = flatMap.connect(broadcastDs);
-        SingleOutputStreamOperator<JSONObject> process = connectDs.process(new DwdProcessFunction(mapStageDesc));
+        connectDs.process(new DwdProcessFunction(mapStageDesc));
 
-        process.map(x -> x.toJSONString())
-                .sinkTo(KafkaUtils.buildKafkaSink(kafka_botstrap_servers, kafka_topic_db))
-                .uid("dwd_topic_db")
-                .name("dwd_topic_db");
 
         env.execute();
 

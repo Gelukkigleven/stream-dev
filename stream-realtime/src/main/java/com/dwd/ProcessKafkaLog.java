@@ -1,4 +1,4 @@
-package com.retailersv1;
+package com.dwd;
 
 
 import com.alibaba.fastjson.JSON;

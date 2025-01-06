@@ -1,7 +1,6 @@
 package com.retailersv1.func;
 
 import com.alibaba.fastjson.JSONObject;
-import com.retailersv1.domain.TableProcessDim;
 import com.retailersv1.domain.TableProcessDwd;
 import com.stream.common.utils.ConfigUtils;
 import com.stream.common.utils.JdbcUtils;
@@ -9,7 +8,6 @@ import com.stream.common.utils.KafkaUtils;
 import org.apache.flink.api.common.state.BroadcastState;
 import org.apache.flink.api.common.state.MapStateDescriptor;
 import org.apache.flink.api.common.state.ReadOnlyBroadcastState;
-import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.configuration.Configuration;
 import org.apache.flink.streaming.api.functions.co.BroadcastProcessFunction;
 import org.apache.flink.util.Collector;
